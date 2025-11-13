@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adflix App Prototype</title>
+    <!-- Import Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Import Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111; /* Darker background for the "outside" */
+        }
+        
+        /* Gen Z vibrant accent color */
+        :root {
+            --accent-color: #E024C4; /* Vibrant Pink/Magenta */
+        }
+
+        /* Styles for simulating the app */
+        #app-container {
+            max-width: 420px; /* Simulate phone width */
+            height: 896px; /* Simulate phone height */
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 12px #1a1a1a, 0 0 0 14px #333; /* Phone bezel effect */
+            border-radius: 40px;
+        }
+        
+        /* Hide all pages by default */
+        .page {
+            display: none;
+        }
+        /* Show the active page */
+        .page.active-page {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        /* Active nav item style */
+        .nav-item.active-nav svg {
+            color: var(--accent-color);
+        }
+        .nav-item.active-nav span {
+            color: var(--accent-color);
+        }
+        
+        /* Fade-in animation for pages */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal styles */
+        #modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #modal-content {
+            transition: transform 0.3s ease-in-out;
+            transform: translateY(20px);
+        }
+        #modal-overlay.flex {
+            opacity: 1 !important;
+        }
+        #modal-overlay.flex #modal-content {
+            transform: translateY(0);
+        }
+        
+        /* Custom scrollbar for horizontal feeds */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Custom tab styles */
+        .tab-btn.active-tab {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .tab-btn {
+            background-color: #374151; /* gray-700 */
+            color: #d1d5db; /* gray-300 */
+        }
+        .video-tab-content {
+            display: none;
+        }
+        .video-tab-content.active-tab-content {
+            display: grid;
+        }
+        
+        /* Ensure images cover their containers beautifully */
+        .img-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-900">
+
+    <!-- App Container (Simulates Phone) -->
+    <div id="app-container" class="relative flex flex-col w-full mx-auto overflow-hidden bg-black text-gray-100">
+
+        <!-- ===== MAIN CONTENT AREA ===== -->
+        <!-- All content pages will be rendered here. `pb-24` adds padding to avoid the bottom nav -->
+        <main id="page-content" class="flex-grow w-full overflow-y-auto pb-24">
+
+            <!-- 
+            =========================================
+            PAGE 1: HOME (Based on your image)
+            =========================================
+            -->
+            <div id="page-home" class="page active-page p-4 pt-8 space-y-8">
+                <!-- Header -->
+                <header class="flex items-center justify-between">
+                    <h1 class="text-3xl font-extrabold text-white">adflix</h1>
+                    <div class="flex items-center space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <img 
+                            src="https://images.unsplash.com/photo-1531123414780-f74242c2b052?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjJ8fGJsYWNrJTIwd29tYW4lMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=40&q=80" 
+                            onerror="this.src='https://placehold.co/40x40/E024C4/white?text=A'"
+                            alt="User Profile" 
+                            class="w-10 h-10 rounded-full border-2 border-[var(--accent-color)] img-cover">
+                    </div>
+                </header>
+                
+                <!-- Section: Trending Faces -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Trending Faces</h2>
+                    <div class="flex space-x-4 overflow-x-auto no-scrollbar pb-2">
+                        <!-- Model 1 -->
+                        <div class="flex-shrink-0 text-center cursor-pointer" onclick="showModelDetail(1)">
+                            <img 
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9kZWwlMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=80&q=80" 
+                                onerror="this.src='https://placehold.co/80x80/22c55e/white?text=Mia'"
+                                alt="Trending Model 1" 
+                                class="w-20 h-20 rounded-full border-4 border-gray-700 hover:border-[var(--accent-color)] transition-all img-cover">
+                            <span class="block text-sm mt-2 font-medium">Mia</span>
+                        </div>
+                        <!-- Model 2 -->
+                        <div class="flex-shrink-0 text-center cursor-pointer" onclick="showModelDetail(2)">
+                            <img 
+                                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFsZSUyMG1vZGVsfGVufDB8fDB8fHww&auto=format&fit=crop&w=80&q=80" 
+                                onerror="this.src='https://placehold.co/80x80/ef4444/white?text=Leo'"
+                                alt="Trending Model 2" 
+                                class="w-20 h-20 rounded-full border-4 border-gray-700 hover:border-[var(--accent-color)] transition-all img-cover">
+                            <span class="block text-sm mt-2 font-medium">Leo</span>
+                        </div>
+                        <!-- Model 3 -->
+                        <div class="flex-shrink-0 text-center cursor-pointer" onclick="showModelDetail(3)">
+                            <img 
+                                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bW9kZWwlMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=80&q=80" 
+                                onerror="this.src='https://placehold.co/80x80/f97316/white?text=Zoe'"
+                                alt="Trending Model 3" 
+                                class="w-20 h-20 rounded-full border-4 border-gray-700 hover:border-[var(--accent-color)] transition-all img-cover">
+                            <span class="block text-sm mt-2 font-medium">Zoe</span>
+                        </div>
+                        <!-- Model 4 -->
+                        <div class="flex-shrink-0 text-center cursor-pointer" onclick="showModelDetail(4)">
+                            <img 
+                                src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=80&q=80" 
+                                onerror="this.src='https://placehold.co/80x80/8b5cf6/white?text=Eva'"
+                                alt="Trending Model 5" 
+                                class="w-20 h-20 rounded-full border-4 border-gray-700 hover:border-[var(--accent-color)] transition-all img-cover">
+                            <span class="block text-sm mt-2 font-medium">Eva</span>
+                        </div> 
+                        
+                        <!-- Model 5 -->
+                        <div class="flex-shrink-0 text-center cursor-pointer" onclick="showModelDetail(5)">
+                            <img 
+                                src="https://images.unsplash.com/photo-1504274066651-8d31a536b11a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGFuZHJvZ3lub3VzJTIwbW9kZWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=80&q=80" 
+                                onerror="this.src='https://placehold.co/80x80/3b82f6/white?text=Kai'"
+                                alt="Trending Model 4" 
+                                class="w-20 h-20 rounded-full border-4 border-gray-700 hover:border-[var(--accent-color)] transition-all img-cover">
+                            <span class="block text-sm mt-2 font-medium">Kai</span>
+                        </div> 
+                        
+                    </div>
+                </section>
+
+                <!-- Section: Adflix Originals -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Adflix Originals</h2>
+                    <div class="relative rounded-2xl overflow-hidden cursor-pointer shadow-lg h-48" onclick="showPage('page-videos', 'originals')">
+                        <img 
+                            src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2luZW1hdGljfGVufDB8fDB8fHww&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/1f2937/7dd3fc?text=Originals+Thumbnail'"
+                            alt="Adflix Originals" 
+                            class="img-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold">CYBERPUNK DREAMS</h3>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Adflix Creatives -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Adflix Creatives</h2>
+                    <div class="relative rounded-2xl overflow-hidden cursor-pointer shadow-lg h-48" onclick="showPage('page-videos', 'creatives')">
+                        <img 
+                            src="https://images.unsplash.com/photo-1606880228052-a86a63c2c8f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3QlMjBwaG90b2dyYXBoeXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/4c1d95/c4b5fd?text=Creatives+Thumbnail'"
+                            alt="Adflix Creatives" 
+                            class="img-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <h3 class="absolute bottom-4 left-4 text-2xl font-bold">CLIENT SHOWCASE</h3>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white/30 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section: Our Models -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Our Models</h2>
+                    <div class="relative rounded-2xl overflow-hidden cursor-pointer shadow-lg h-48" onclick="showPage('page-models')">
+                        <img 
+                            src="https://images.unsplash.com/photo-1542327534-59a1fe8daf73?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZhc2hpb24lMjBncm91cHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/7c2d12/fca5a5?text=Models+Showcase'"
+                            alt="Our Models" 
+                            class="img-cover">
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <h3 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-extrabold text-white tracking-widest">EXPLORE</h3>
+                    </div>
+                </section>
+                
+                <!-- Section: Services -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Services</h2>
+                    <div class="relative rounded-2xl overflow-hidden cursor-pointer shadow-lg h-48" onclick="showPage('page-services')">
+                        <img 
+                            src="https://images.unsplash.com/photo-1574716484355-813c41181186?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGhvdG9ncmFwaHklMjBzdHVkaW98ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/1e3a8a/93c5fd?text=Services+Showcase'"
+                            alt="Our Services" 
+                            class="img-cover">
+                        <div class="absolute inset-0 bg-black/50"></div>
+                        <h3 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-extrabold text-white tracking-widest">CONNECT</h3>
+                    </div>
+                </section>
+
+                <!-- Section: Adflix Feed (Fashion News) -->
+                <section>
+                    <h2 class="text-xl font-bold mb-4">Adflix Feed</h2>
+                    <div class="rounded-2xl bg-gray-900 overflow-hidden cursor-pointer" onclick="showFeedDetail(1)">
+                        <img 
+                            src="https://images.unsplash.com/photo-1513094735237-8f2714d57c13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZmFzaGlvbiUyMHNob3BwaW5nfGVufDB8fDB8fHww&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x300/4a044e/f0abfc?text=Fashion+News'"
+                            alt="Fashion News" 
+                            class="w-full h-40 img-cover">
+                        <div class="p-4">
+                            <span class="text-xs font-semibold text-[var(--accent-color)] uppercase">FASHION WEEK</span>
+                            <h3 class="text-lg font-bold mt-1">The Future of Fashion is Here</h3>
+                            <p class="text-sm text-gray-400 mt-2">See the latest trends from the Paris runway, exclusively on Adflix Feed...</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div> <!-- End Page: Home -->
+
+            <!-- 
+            =========================================
+            PAGE 2: OUR MODELS
+            =========================================
+            -->
+            <div id="page-models" class="page p-4 pt-8">
+                <!-- Simple header -->
+                <header class="flex items-center justify-center relative mb-6">
+                    <!-- Back button -->
+                    <button onclick="showPage('page-home')" class="absolute left-0 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1 class="text-2xl font-bold">Our Models</h1>
+                </header>
+
+                <!-- Search Bar -->
+                <div class="relative mb-6">
+                    <input type="text" placeholder="Search models..." class="w-full bg-gray-800 border-2 border-gray-700 rounded-full py-3 px-6 pl-12 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-color)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                
+                <!-- Models Grid -->
+                <div id="models-grid" class="grid grid-cols-2 gap-4">
+                    <!-- Models will be dynamically inserted here -->
+                </div>
+            </div> <!-- End Page: Models -->
+            
+            <!-- 
+            =========================================
+            PAGE 3: MODEL DETAIL
+            =========================================
+            -->
+            <div id="page-model-detail" class="page">
+                <!-- This content is dynamically generated by showModelDetail() -->
+            </div> <!-- End Page: Model Detail -->
+
+            <!-- 
+            =========================================
+            PAGE 4: ADLFIX VIDEOS (Originals / Creatives)
+            =========================================
+            -->
+            <div id="page-videos" class="page p-4 pt-8">
+                <!-- Simple header -->
+                <header class="flex items-center justify-center relative mb-6">
+                    <button onclick="showPage('page-home')" class="absolute left-0 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1 class="text-2xl font-bold">Our Videos</h1>
+                </header>
+                
+                <!-- Tab Navigation -->
+                <div class="flex space-x-2 p-1 bg-gray-800 rounded-full mb-6">
+                    <button id="tab-btn-originals" class="tab-btn flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all" onclick="showVideoTab('originals')">
+                        Adflix Originals
+                    </button>
+                    <button id="tab-btn-creatives" class="tab-btn flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all" onclick="showVideoTab('creatives')">
+                        Adflix Creatives
+                    </button>
+                </div>
+
+                <!-- Tab Content: Originals -->
+                <div id="tab-content-originals" class="video-tab-content grid grid-cols-1 gap-4">
+                    <!-- Video items -->
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Y2luZW1hdGljfGVufDB8fDB8fHww&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/1f2937/7dd3fc?text=Originals+1'"
+                            alt="Video 1" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold">Cyberpunk Dreams</h3>
+                            <p class="text-sm text-gray-400">A high-fashion short film.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1536440136628-849c17971c40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2luZW1hdGljfGVufDB8fDB8fHww&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/1f2937/a5f3fc?text=Originals+2'"
+                            alt="Video 2" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold">Neon Nights</h3>
+                            <p class="text-sm text-gray-400">Music video concept.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Creatives -->
+                <div id="tab-content-creatives" class="video-tab-content grid grid-cols-1 gap-4">
+                    <!-- Video items -->
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1606880228052-a86a63c2c8f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHByb2R1Y3QlMjBwaG90b2dyYXBoeXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x340/4c1d95/c4b5fd?text=Creatives+1'"
+                            alt="Video 1" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-bold">Client Showcase: Aura</h3>
+                            <p class="text-sm text-gray-400">Brand commercial.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End Page: Videos -->
+
+            <!-- 
+            =========================================
+            PAGE 5: ADLFIX FEED (News)
+            =========================================
+            -->
+            <div id="page-feed" class="page p-4 pt-8">
+                <!-- Simple header -->
+                <header class="flex items-center justify-center relative mb-6">
+                    <button onclick="showPage('page-home')" class="absolute left-0 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1 class="text-2xl font-bold">Adflix Feed</h1>
+                </header>
+                
+                <!-- Feed List -->
+                <div id="feed-list" class="space-y-6">
+                    <!-- Feed items will be dynamically inserted here -->
+                </div>
+            </div> <!-- End Page: Feed -->
+            
+            <!-- 
+            =========================================
+            PAGE 6: FEED DETAIL
+            =========================================
+            -->
+            <div id="page-feed-detail" class="page">
+                <!-- This content is dynamically generated by showFeedDetail() -->
+            </div> <!-- End Page: Feed Detail -->
+
+            <!-- 
+            =========================================
+            PAGE 7: SERVICES
+            =========================================
+            -->
+            <div id="page-services" class="page p-4 pt-8">
+                <!-- Simple header -->
+                <header class="flex items-center justify-center relative mb-6">
+                    <button onclick="showPage('page-home')" class="absolute left-0 p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1 class="text-2xl font-bold">Our Services</h1>
+                </header>
+
+                <div class="space-y-6">
+                    <!-- Service: Studio -->
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1574716484355-813c41181186?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGhvdG9ncmFwaHklMjBzdHVkaW98ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x300/1e3a8a/93c5fd?text=Studio'"
+                            alt="Studio Service" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-5">
+                            <h3 class="text-2xl font-bold">Studio Rental</h3>
+                            <p class="text-gray-400 mt-2 mb-4">Our state-of-the-art studio is available for photo and video shoots. Equipped with professional lighting and backdrops.</p>
+                            <button class="w-full bg-[var(--accent-color)] text-white font-bold py-3 rounded-xl hover:bg-opacity-80 transition-all" onclick="showModal('Studio Enquiry', 'service')">
+                                Connect
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service: Podcast -->
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1590602843685-391003ba8960?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9kY2FzdCUyMHN0dWRpb3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x300/064e3b/6ee7b7?text=Podcast'"
+                            alt="Podcast Service" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-5">
+                            <h3 class="text-2xl font-bold">Podcast Studio</h3>
+                            <p class="text-gray-400 mt-2 mb-4">High-quality audio recording and production services. Our sound-proof booth is perfect for your next podcast episode.</p>
+                            <button class="w-full bg-[var(--accent-color)] text-white font-bold py-3 rounded-xl hover:bg-opacity-80 transition-all" onclick="showModal('Podcast Enquiry', 'service')">
+                                Connect
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Service: Premieres -->
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden shadow-lg">
+                        <img 
+                            src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZXZlbnQlMjBwYXJ0eXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                            onerror="this.src='https://placehold.co/600x300/7f1d1d/fca5a5?text=Premiere'"
+                            alt="Premiere Service" 
+                            class="w-full h-48 img-cover">
+                        <div class="p-5">
+                            <h3 class="text-2xl font-bold">Premiere Support</h3>
+                            <p class="text-gray-400 mt-2 mb-4">Launch your film in style. We handle event management, red carpet, and promotion for your premiere shows.</p>
+                            <button class="w-full bg-[var(--accent-color)] text-white font-bold py-3 rounded-xl hover:bg-opacity-80 transition-all" onclick="showModal('Premiere Support Enquiry', 'service')">
+                                Connect
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End Page: Services -->
+
+        </main> <!-- End Page Content -->
+
+
+        <!-- 
+        =========================================
+        BOTTOM NAVIGATION BAR
+        =========================================
+        -->
+        <nav class="absolute bottom-0 left-0 right-0 w-full bg-gray-900 border-t border-gray-700 h-20 flex justify-around items-center px-4" style="border-top-left-radius: 20px; border-top-right-radius: 20px;">
+            <!-- Nav Item: Home -->
+            <button id="nav-home" class="nav-item active-nav flex flex-col items-center justify-center text-gray-400" onclick="showPage('page-home')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span class="text-xs font-medium">Home</span>
+            </button>
+            <!-- Nav Item: Models -->
+            <button id="nav-models" class="nav-item flex flex-col items-center justify-center text-gray-400" onclick="showPage('page-models')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span class="text-xs font-medium">Models</span>
+            </button>
+            <!-- Nav Item: Videos -->
+            <button id="nav-videos" class="nav-item flex flex-col items-center justify-center text-gray-400" onclick="showPage('page-videos', 'originals')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                <span class="text-xs font-medium">Videos</span>
+            </button>
+            <!-- Nav Item: Feed -->
+            <button id="nav-feed" class="nav-item flex flex-col items-center justify-center text-gray-400" onclick="showPage('page-feed')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+                <span class="text-xs font-medium">Feed</span>
+            </button>
+            <!-- Nav Item: Services -->
+            <button id="nav-services" class="nav-item flex flex-col items-center justify-center text-gray-400" onclick="showPage('page-services')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span class="text-xs font-medium">Services</span>
+            </button>
+        </nav>
+
+        <!-- 
+        =========================================
+        MODAL (for Enquire / Apply Forms)
+        =========================================
+        -->
+        <div id="modal-overlay" class="absolute inset-0 bg-black/70 flex items-center justify-center p-4 opacity-0 hidden backdrop-blur-sm" onclick="closeModal()">
+            
+            <div id="modal-content" class="bg-gray-800 w-full max-w-sm rounded-2xl shadow-2xl p-6" onclick="event.stopPropagation()">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <h3 id="modal-title" class="text-xl font-bold text-white">Enquire Now</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                <!-- Modal Form -->
+                <form id="modal-form" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" id="form-type" value="">
+                    
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Name</label>
+                        <input type="text" id="name" name="name" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-[var(--accent-color)]" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="email" name="email" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-[var(--accent-color)]" required>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="mobile" class="block text-sm font-medium text-gray-300 mb-1">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" class="w-full bg-gray-700 border-2 border-gray-600 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-[var(--accent-color)]" required>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-[var(--accent-color)] text-white font-bold py-3 rounded-lg hover:bg-opacity-80 transition-all">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div> <!-- End App Container -->
+
+
+    <!-- 
+    =========================================
+    APP JAVASCRIPT
+    =========================================
+    -->
+    <script>
+        // --- MOCK DATA ---
+
+        const mockModels = {
+            1: {
+                name: "Mia",
+                profilePic: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bW9kZWwlMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80",
+                fallbackProfilePic: "https://placehold.co/400x500/22c55e/white?text=Mia",
+                bio: "Mia is an international model with 5 years of experience in runway and print. She brings a dynamic and versatile look to every project.",
+                stats: { Height: "5' 9\"", Bust: "32\"", Waist: "24\"", Hips: "34\"", Eyes: "Green" },
+                gallery: [
+                    { src: "https://images.unsplash.com/photo-1522307837370-cc113a36b784?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzF8fGZhc2hpb24lMjBtb2RlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/22c55e/white?text=Mia+1" },
+                    { src: "https://images.unsplash.com/photo-1519764622348-25258a8e14b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fGZhc2hpb24lMjBtb2RlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/22c55e/333?text=Mia+2" },
+                    { src: "https://images.unsplash.com/photo-1551009175-8a68da93d5f9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fGZhc2hpb24lMjBtb2RlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/22c55e/white?text=Mia+3" }
+                ]
+            },
+            2: {
+                name: "Leo",
+                profilePic: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFsZSUyMG1vZGVsfGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80",
+                fallbackProfilePic: "https://placehold.co/400x500/ef4444/white?text=Leo",
+                bio: "Leo is a commercial and fitness model known for his strong presence and professional attitude. Based in New York.",
+                stats: { Height: "6' 2\"", Chest: "40\"", Waist: "31\"", Suit: "40R", Eyes: "Brown" },
+                gallery: [
+                    { src: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFsZSUyMG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/ef4444/white?text=Leo+1" },
+                    { src: "https://images.unsplash.com/photo-1530268729831-4b0b9e170218?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG1hbGUlMjBtb2RlbCUyMHBvcnRyYWl0fGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/ef4444/333?text=Leo+2" }
+                ]
+            },
+            3: {
+                name: "Zoe",
+                profilePic: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8bW9kZWwlMjBwb3J0cmFpdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80",
+                fallbackProfilePic: "https://placehold.co/400x500/f97316/white?text=Zoe",
+                bio: "Zoe's unique look has landed her campaigns with major alternative fashion brands. She is also a trained dancer.",
+                stats: { Height: "5' 7\"", Bust: "30\"", Waist: "23\"", Hips: "33\"", Eyes: "Blue" },
+                gallery: [
+                    { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZmFzaGlvbiUyMG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/f97316/white?text=Zoe+1" },
+                    { src: "https://images.unsplash.com/photo-1552695826-66f81f3c3b0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjh8fGZhc2hpb24lMjBtb2RlbCUyMHBvcnRyYWl0fGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/f97316/333?text=Zoe+2" },
+                    { src: "https://images.unsplash.com/photo-1562572152-183a3d0f0010?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDd8fGZhc2hpb24lMjBtb2RlbCUyMHBvcnRyYWl0fGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/f97316/white?text=Zoe+3" }
+                ]
+            },
+            4: {
+                name: "Eva",
+                profilePic: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fG1vZGVsJTIwcG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=400&q=80",
+                fallbackProfilePic: "https://placehold.co/400x500/8b5cf6/white?text=Eva",
+                bio: "Eva specializes in high-fashion and runway, having walked in Milan, Paris, and London. Her presence is captivating.",
+                stats: { Height: "5' 10\"", Bust: "31\"", Waist: "24\"", Hips: "34\"", Eyes: "Brown" },
+                gallery: [
+                    { src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZmFzaGlvbiUyMG1vZGVsfGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/8b5cf6/white?text=Eva+1" },
+                    { src: "https://images.unsplash.com/photo-1535201742168-6d4f653d4824?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTV8fGZhc2hpb24lMjBtb2RlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/8b5cf6/333?text=Eva+2" },
+                    { src: "https://images.unsplash.com/photo-1545127398-14699f92334b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjV8fGZhc2hpb24lMjBtb2RlbHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/8b5cf6/white?text=Eva+3" }
+                ]                
+            },
+            5: {
+                name: "Kai",
+                profilePic: "https://images.unsplash.com/photo-1504274066651-8d31a536b11a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGFuZHJvZ3lub3VzJTIwbW9kZWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=400&q=80",
+                fallbackProfilePic: "https://placehold.co/400x500/3b82f6/white?text=Kai",
+                bio: "Kai is a non-binary model breaking barriers in the industry. Their versatile look is perfect for editorial and avant-garde projects.",
+                stats: { Height: "5' 11\"", Chest: "34\"", Waist: "28\"", Hips: "35\"", Eyes: "Hazel" },
+                gallery: [
+                    { src: "https://images.unsplash.com/photo-1542157581-01188fAaf103?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjZ8fGFuZHJvZ3lub3VzJTIwbW9kZWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/3b82f6/white?text=Kai+1" },
+                    { src: "https://images.unsplash.com/photo-1564282338198-68f70753f793?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG5vbiUyMGJpbmFyeSUyMG1vZGVsfGVufDB8fDB8fHww&auto=format&fit=crop&w=400&q=80", fallback: "https://placehold.co/400x500/3b82f6/333?text=Kai+2" },
+                ]
+            }
+        };
+
+        const mockFeed = {
+            1: {
+                title: "The Future of Fashion is Here",
+                category: "FASHION WEEK",
+                image: "https://images.unsplash.com/photo-1513094735237-8f2714d57c13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZmFzaGlvbiUyMHNob3BwaW5nfGVufDB8fDB8fHww&auto=format&fit=crop&w=600&q=80",
+                fallbackImage: "https://placehold.co/600x300/4a044e/f0abfc?text=Fashion+News",
+                content: "<p>The Paris runway was set ablaze this year with a fusion of tech and couture. Designers showcased sustainable fabrics, 3D-printed garments, and augmented reality overlays that redefined the very essence of a fashion show.</p><p>Key trends included 'digital lavender' as the color of the year, oversized silhouettes, and a return to bold, '80s-inspired power dressing. Adflix was there to capture every moment.</p>",
+                allowApply: false
+            },
+            2: {
+                title: "OPEN CASTING CALL: 'Neon Nights'",
+                category: "OPPORTUNITY",
+                image: "https://images.unsplash.com/photo-1505692952047-1a78305da1b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2FzdGluZyUyMGNhbGx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=80",
+                fallbackImage: "https://placehold.co/600x300/155e75/67e8f9?text=Casting+Call",
+                content: "<p>Adflix Originals is casting for its upcoming music video, 'Neon Nights.' We are looking for models and actors of all backgrounds to bring this cyberpunk world to life.</p><p><strong>Roles:</strong></p><ul class='list-disc pl-5 space-y-1'><li>- Main Character (any gender, 20-30, expressive)</li><li>- Dancers (5, proficient in street/modern)</li><li>- Extras (20, diverse looks)</li></ul><p>If you have a unique look and are ready to be part of something big, apply now!</p>",
+                allowApply: true
+            },
+            3: {
+                title: "Studio Secrets: Lighting 101",
+                category: "BEHIND THE SCENES",
+                image: "https://images.unsplash.com/photo-1549417229-aa67d5839490?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGhvdG9ncmFwaHklMjBzdHVkaW8lMjBsaWdodHN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=600&q=80",
+                fallbackImage: "https://placehold.co/600x300/713f12/fde047?text=Studio+Lights",
+                content: "<p>Ever wondered how to get that perfect shot? It's all about lighting. Our head photographer shares three simple setups you can try in our studio: Rembrandt, Butterfly, and Split lighting. </p><p>Read on to master the basics and elevate your photography game. Book our studio today to practice!</p>",
+                allowApply: false
+            }
+        };
+
+        // --- NAVIGATION & PAGE STATE ---
+
+        const pages = document.querySelectorAll('.page');
+        const navItems = document.querySelectorAll('.nav-item');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalForm = document.getElementById('modal-form');
+        const formTypeInput = document.getElementById('form-type');
+
+        // Show default page on load
+        document.addEventListener('DOMContentLoaded', () => {
+            populateModelsGrid();
+            populateFeedList();
+            showPage('page-home'); // Show home page by default
+            showVideoTab('originals'); // Show originals tab by default
+        });
+
+        function showPage(pageId, param = null) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active-page');
+            });
+            // Show the target page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active-page');
+                // Scroll to top of new page
+                document.getElementById('page-content').scrollTop = 0;
+            }
+
+            // Update nav active state
+            const navId = `nav-${pageId.split('-')[1]}`; // e.g., 'page-models' -> 'nav-models'
+            navItems.forEach(item => {
+                item.classList.remove('active-nav');
+                if (item.id === navId) {
+                    item.classList.add('active-nav');
+                }
+            });
+            // Handle special cases
+            if (pageId === 'page-home') {
+                 document.getElementById('nav-home').classList.add('active-nav');
+            }
+            // Handle detail pages linking back to their categories
+            if (pageId.startsWith('page-model-detail')) {
+                document.getElementById('nav-models').classList.add('active-nav');
+            }
+            if (pageId.startsWith('page-feed-detail')) {
+                document.getElementById('nav-feed').classList.add('active-nav');
+            }
+            
+            // Handle params
+            if (pageId === 'page-videos' && param) {
+                showVideoTab(param);
+            }
+        }
+
+        // --- VIDEO PAGE TABS ---
+        function showVideoTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.video-tab-content').forEach(el => el.classList.remove('active-tab-content'));
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+            
+            // Show target content
+            document.getElementById(`tab-content-${tabName}`).classList.add('active-tab-content');
+            // Activate target button
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active-tab');
+        }
+
+        // --- DYNAMIC CONTENT POPULATION ---
+
+        // Populate the "Our Models" grid
+        function populateModelsGrid() {
+            const grid = document.getElementById('models-grid');
+            grid.innerHTML = ''; // Clear existing
+            for (const id in mockModels) {
+                const model = mockModels[id];
+                const modelCard = `
+                    <div class="relative rounded-2xl overflow-hidden cursor-pointer h-64" onclick="showModelDetail(${id})">
+                        <img 
+                            src="${model.profilePic}" 
+                            onerror="this.src='${model.fallbackProfilePic}'"
+                            alt="${model.name}" 
+                            class="img-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <h3 class="absolute bottom-3 left-3 text-lg font-bold">${model.name}</h3>
+                    </div>
+                `;
+                grid.innerHTML += modelCard;
+            }
+        }
+        
+        // Populate the "Adflix Feed" list
+        function populateFeedList() {
+            const list = document.getElementById('feed-list');
+            list.innerHTML = ''; // Clear existing
+            for (const id in mockFeed) {
+                const item = mockFeed[id];
+                const feedCard = `
+                    <div class="bg-gray-900 rounded-2xl overflow-hidden cursor-pointer" onclick="showFeedDetail(${id})">
+                        <img 
+                            src="${item.image}" 
+                            onerror="this.src='${item.fallbackImage}'"
+                            alt="${item.title}" 
+                            class="w-full h-40 img-cover">
+                        <div class="p-4">
+                            <span class="text-xs font-semibold text-[var(--accent-color)] uppercase">${item.category}</span>
+                            <h3 class="text-lg font-bold mt-1">${item.title}</h3>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += feedCard;
+            }
+        }
+
+        // Show a model's detail page
+        function showModelDetail(modelId) {
+            const model = mockModels[modelId];
+            if (!model) return;
+            
+            const detailPage = document.getElementById('page-model-detail');
+            
+            // Generate stats HTML
+            let statsHtml = '';
+            for (const stat in model.stats) {
+                statsHtml += `
+                    <div class="bg-gray-800 rounded-lg p-3 text-center">
+                        <span class="text-xs text-gray-400">${stat}</span>
+                        <p class="text-sm font-semibold">${model.stats[stat]}</p>
+                    </div>
+                `;
+            }
+
+            // Generate gallery HTML
+            let galleryHtml = '';
+            model.gallery.forEach(img => {
+                galleryHtml += `
+                    <img 
+                        src="${img.src}" 
+                        onerror="this.src='${img.fallback}'"
+                        alt="${model.name} gallery image" 
+                        class="w-full h-auto rounded-xl">
+                `;
+            });
+
+            detailPage.innerHTML = `
+                <!-- Top Nav Bar -->
+                <header class="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-gradient-to-b from-black/70 to-transparent">
+                    <button onclick="showPage('page-models')" class="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button class="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                    </button>
+                </header>
+            
+                <!-- Hero Image -->
+                <div class="h-96 w-full">
+                    <img 
+                        src="${model.profilePic}" 
+                        onerror="this.src='${model.fallbackProfilePic}'"
+                        alt="${model.name}" 
+                        class="img-cover">
+                </div>
+                
+                <!-- Content -->
+                <div class="p-4 space-y-6 pb-24">
+                    <h1 class="text-3xl font-extrabold">${model.name}</h1>
+                    
+                    <p class="text-gray-300">${model.bio}</p>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-3 gap-3">
+                        ${statsHtml}
+                    </div>
+                    
+                    <!-- Enquire Button -->
+                    <button class="w-full bg-[var(--accent-color)] text-white font-bold py-4 rounded-xl text-lg hover:bg-opacity-80 transition-all" onclick="showModal('Enquiry for ${model.name}', 'model')">
+                        Enquire Now
+                    </button>
+                    
+                    <!-- Gallery -->
+                    <div>
+                        <h2 class="text-xl font-bold mb-4">Gallery</h2>
+                        <div class="space-y-4">
+                            ${galleryHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showPage('page-model-detail');
+        }
+        
+        // Show a feed item's detail page
+        function showFeedDetail(feedId) {
+            const item = mockFeed[feedId];
+            if (!item) return;
+
+            const detailPage = document.getElementById('page-feed-detail');
+            
+            detailPage.innerHTML = `
+                <!-- Top Nav Bar -->
+                <header class="sticky top-0 z-10 flex items-center p-4 bg-black border-b border-gray-800">
+                    <button onclick="showPage(document.referrer.includes('page-home') ? 'page-home' : 'page-feed')" class="p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1 class="text-lg font-semibold mx-auto">${item.category}</h1>
+                    <div class="w-8"></div> <!-- Placeholder for centering -->
+                </header>
+                
+                <!-- Content -->
+                <div class="p-4 ${item.allowApply ? 'pb-24' : ''}">
+                    <img 
+                        src="${item.image}" 
+                        onerror="this.src='${item.fallbackImage}'"
+                        alt="${item.title}" 
+                        class="w-full h-auto rounded-2xl mb-4">
+                    <h1 class="text-3xl font-extrabold mb-4">${item.title}</h1>
+                    <div class="text-gray-300 space-y-4">
+                        ${item.content}
+                    </div>
+                </div>
+                
+                <!-- Apply Button (Conditional) -->
+                ${item.allowApply ? `
+                <div class="sticky bottom-0 p-4 bg-black/80 backdrop-blur-lg border-t border-gray-800">
+                    <button class="w-full bg-[var(--accent-color)] text-white font-bold py-4 rounded-xl text-lg hover:bg-opacity-80 transition-all" onclick="showModal('Apply: ${item.title}', 'feed')">
+                        Apply Now
+                    </button>
+                </div>
+                ` : ''}
+            `;
+            
+            showPage('page-feed-detail');
+        }
+
+
+        // --- MODAL FUNCTIONS ---
+
+        function showModal(title, formType) {
+            modalTitle.textContent = title;
+            formTypeInput.value = formType;
+            modalOverlay.classList.remove('hidden');
+            setTimeout(() => modalOverlay.classList.add('flex'), 10); // Delay to allow transition
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('flex');
+            setTimeout(() => modalOverlay.classList.add('hidden'), 300); // Wait for transition
+            modalForm.reset();
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(modalForm);
+            const data = Object.fromEntries(formData.entries());
+            
+            console.log('Form Submitted!');
+            console.log('Form Type:', data['form-type']);
+            console.log('Name:', data.name);
+            console.log('Email:', data.email);
+            console.log('Mobile:', data.mobile);
+            
+            // In a real app, you'd send this to your backend.
+            
+            closeModal();
+            
+            // Show a temporary "success" message
+            const successMsg = document.createElement('div');
+            successMsg.textContent = 'Submission successful!';
+            successMsg.className = 'fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-white py-2 px-6 rounded-full shadow-lg z-50';
+            document.getElementById('app-container').appendChild(successMsg);
+            
+            setTimeout(() => {
+                successMsg.remove();
+            }, 3000);
+        }
+
+    </script>
+
+</body>
+</html>
